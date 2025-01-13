@@ -10,7 +10,8 @@ import { BaseService } from '../base.service';
 
 export class DatasComponent implements OnInit {
 datas:any=[]
-editdatas = { id:null, name:'',value:'',category:'',timestamp:''}
+newData = {name:'',value:0,category:'',timestamp:0}
+editdatas = { id:null, name:'',value:0,category:'',timestamp:0}
 cols:any=[]
 
 
@@ -25,6 +26,42 @@ LoadDatas():void{
     this.datas=res
   })
 }
+createProduct(): void {
+  this.base.create(this.newData).subscribe({
+    next: (response) => {
+      alert('Adat hozzáadva')
+      this.newData = {name:'',value:0,category:'',timestamp:0}
+      this.LoadDatas()
+    },
+    error: (error) => {
+      console.error('Hiba történt:', error)
+      alert('Nem sikerült a hozzáadás')
+    },
+    complete: () => {
+      console.log('Hozzáadás kész')
+    }
+  });
+}
+
+updateData(): void {
+  if (this.editdatas.id !== null) {
+    this.base.update(this.editdatas.id, this.editdatas).subscribe({
+      next: (response) => {
+        alert('Adat frissítve!')
+        this.LoadDatas()
+      },
+      error: (error) => {
+        console.error('Hiba történt:', error)
+        alert('Nem sikerült a frissítés.')
+      },
+      complete: () => {
+        console.log('Frissítés kész.')
+      }
+    });
+  } else {
+    alert('Hibás ID.');
+  }
+}
 
 patch(): void {
   if (this.editdatas.id !== null) {
@@ -38,4 +75,25 @@ patch(): void {
     alert('Sikertelen frisstés')
   }
 }
+deleteData(id: number): void {
+  if (id !== null && id !== undefined) {
+    this.base.delete(id).subscribe({
+      next: (response) => {
+        alert('Adat törölve')
+        this.LoadDatas()
+      },
+      error: (error) => {
+        console.error('Hiba történt:', error)
+        alert('Nem sikerült a törlés.')
+      },
+      complete: () => {
+        console.log('Delete megvot')
+      }
+    })
+  } else {
+    alert('Hiba: nincs id')
+  }
+}
+
+
 }
